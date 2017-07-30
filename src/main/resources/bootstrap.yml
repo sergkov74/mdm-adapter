@@ -3,7 +3,7 @@ spring:
     name: mdm-adapter
   cloud:
     config:
-      uri: http://10.31.70.164:7071/config-server
+      uri: http://192.168.70.164:7071/config-server
       fail-fast: true
 management:
   security:

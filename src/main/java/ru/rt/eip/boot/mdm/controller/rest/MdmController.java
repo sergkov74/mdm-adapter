@@ -5,10 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.rt.eip.boot.mdm.dao.MdmClientRepository;
-import ru.rt.eip.boot.mdm.dao.MdmSubscriberRepository;
 import ru.rt.eip.boot.mdm.model.MdmClient;
-import ru.rt.eip.boot.mdm.model.MdmClientId;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @RestController
@@ -27,8 +26,17 @@ public class MdmController {
             @PathVariable final String localSystemId,
             @PathVariable final Long applicationId,
             @PathVariable final Long version) {
-        MdmClientId clientId = new MdmClientId(applicationId, localSystemId, version);
-        return () -> ResponseEntity.ok(clientRepository.findOne(clientId));
+        return () -> ResponseEntity.ok(clientRepository.findOne(localSystemId, applicationId, version));
+
+    }
+
+    @RequestMapping(value = "/clients/{nls}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Callable<ResponseEntity<List<MdmClient>>> getClientByNls(
+            @PathVariable final String nls) {
+        return () -> ResponseEntity.ok(clientRepository.findByNls(nls));
 
     }
 }
