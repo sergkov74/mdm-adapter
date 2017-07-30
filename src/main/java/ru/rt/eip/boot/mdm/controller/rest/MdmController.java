@@ -5,7 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.rt.eip.boot.mdm.dao.MdmClientRepository;
+import ru.rt.eip.boot.mdm.exception.ClientNotFoundException;
 import ru.rt.eip.boot.mdm.model.MdmClient;
+import ru.rt.eip.boot.mdm.service.MdmService;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,7 +17,7 @@ import java.util.concurrent.Callable;
 public class MdmController {
 
     @Autowired
-    private MdmClientRepository clientRepository;
+    private MdmService mdmService;
 
 
     @RequestMapping(value = "/clients/{localSystemId}/{applicationId}/{version}",
@@ -26,7 +28,7 @@ public class MdmController {
             @PathVariable final String localSystemId,
             @PathVariable final Long applicationId,
             @PathVariable final Long version) {
-        return () -> ResponseEntity.ok(clientRepository.findOne(localSystemId, applicationId, version));
+        return () -> ResponseEntity.ok(mdmService.getClient(localSystemId, applicationId, version));
 
     }
 
@@ -34,9 +36,10 @@ public class MdmController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public Callable<ResponseEntity<List<MdmClient>>> getClientByNls(
+    public Callable<ResponseEntity<MdmClient>> getClientByNls(
             @PathVariable final String nls) {
-        return () -> ResponseEntity.ok(clientRepository.findByNls(nls));
+        return () -> ResponseEntity.ok(mdmService.getClientByNls(nls)
+                .orElseThrow(ClientNotFoundException.supplier(nls)));
 
     }
 }
