@@ -17,8 +17,7 @@ public class MdmController {
 
     @Autowired
     private MdmClientRepository clientRepository;
-    @Autowired
-    private MdmSubscriberRepository subscriberRepository;
+
 
     @RequestMapping(value = "/clients/{localSystemId}/{applicationId}/{version}",
             method = RequestMethod.GET,
